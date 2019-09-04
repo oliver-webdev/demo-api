@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="demo.api.dao.SearchDao">
+    <select id="selectAccountInfo" parameterType="string" resultType="demo.api.model.AccountInfo">
+        SELECT * FROM account_info WHERE account_number = #{accountNumber}
+    </select>
+</mapper>
