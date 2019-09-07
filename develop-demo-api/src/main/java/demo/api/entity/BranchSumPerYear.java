@@ -3,24 +3,34 @@ package demo.api.entity;
 import java.util.List;
 
 public class BranchSumPerYear {
-	private Long year;
-	private List<BranchInfo> branchInfoList;
+	private String year;
+	private List<BranchInfo> dataList;
+	
+	public BranchSumPerYear() {}
+	
+	public BranchSumPerYear(String year, List<BranchInfo> dataList) {
+		this.year = year;
+		this.dataList = dataList;
+	}
 
-	public Long getYear() {
+	public String getYear() {
 		return year;
 	}
-	public void setYear(Long year) {
+
+	public void setYear(String year) {
 		this.year = year;
 	}
-	public List<BranchInfo> getBranchInfoList() {
-		return branchInfoList;
+
+	public List<BranchInfo> getDataList() {
+		return dataList;
 	}
-	public void setBranchInfoList(List<BranchInfo> branchInfoList) {
-		this.branchInfoList = branchInfoList;
+
+	public void setDataList(List<BranchInfo> dataList) {
+		this.dataList = dataList;
 	}
 
 	@Override
 	public String toString() {
-		return "BranchSumAmountSortDesc [year=" + year + ", branchInfoList=" + branchInfoList + "]";
-	}	
+		return "BranchSumPerYear [year=" + year + ", dataList=" + dataList + "]";
+	}
 }

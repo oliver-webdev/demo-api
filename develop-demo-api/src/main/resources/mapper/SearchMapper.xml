@@ -4,10 +4,6 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
     
 <mapper namespace="demo.api.dao.SearchDao">
-     <select id="selectAccountInfo" parameterType="string" resultType="demo.api.model.AccountInfo">
-        SELECT * FROM account_info WHERE account_number = #{accountNumber}
-    </select>
-
     <select id="selectCustomerMostSumPerYear" resultType="demo.api.entity.CustomerMostSum">
 	<![CDATA[
 		SELECT
@@ -36,8 +32,8 @@
 							, sum(d_info.amount - d_info.tax) as sumAmt
 						FROM
 							dev.deal_info as d_info
-							inner join dev.account_info as a_info
-								on d_info.account_number = a_info.account_number
+								inner join dev.account_info as a_info
+									on d_info.account_number = a_info.account_number
 						WHERE
 							d_info.cancel <> 'Y'
 								AND
@@ -68,8 +64,8 @@
 						, sum(if(d_info.cancel = 'N', 1, 0)) as cancelCount
 					FROM
 						dev.account_info as a_info
-						left join dev.deal_info as d_info
-							on a_info.account_number = d_info.account_number
+							left join dev.deal_info as d_info
+								on a_info.account_number = d_info.account_number
 					GROUP BY
 						year, acctNum
 			) as sub
@@ -79,12 +75,64 @@
 		ORDER BY
 			sub.year
     </select>
-<!--
-    <select id="selectCustomerMostSum" resultType="demo.api.entity.BranchSumPerYear">
-        SELECT * FROM account_info WHERE account_number = #{accountNumber}
+
+    <select id="selectTargetYear" resultType="string">
+    	SELECT DISTINCT 
+    		left(deal_date, 4) 
+    	FROM 
+    		dev.deal_info;
     </select>
 
-    <select id="selectAccountInfo" parameterType="string" resultType="demo.api.entity.BranchSum">
-        SELECT * FROM account_info WHERE account_number = #{accountNumber}
-    </select> -->
+    <select id="selectBranchSumPerYear" parameterType="string" resultType="demo.api.entity.BranchInfo">
+    <![CDATA[
+        SELECT
+        	b_info.branch_name as brName
+        	, b_info.branch_code as brCode
+        	, sum(d_info.amount - d_info.tax) as sumAmt
+		FROM
+			dev.branch_info b_info
+				inner join dev.account_info a_info
+					on b_info.branch_code = a_info.branch_code
+				inner join dev.deal_info d_info
+					on a_info.account_number = d_info.account_number
+		WHERE
+			left(d_info.deal_date, 4) = #{year}
+				AND
+			d_info.cancel <> 'Y'
+		GROUP BY
+			b_info.branch_name, b_info.branch_code
+		ORDER BY
+			sumAmt DESC
+	]]>
+    </select>
+
+    <select id="selectCodeAndNameOfBranch" parameterType="string" resultType="string">
+		SELECT
+        	b_info.branch_code as brCode
+		FROM
+			dev.branch_info b_info
+		WHERE 
+	    	b_info.branch_name =  #{brName}
+    </select>
+
+    <select id="selectSumAmtOfBranch" parameterType="list" resultType="long">
+		SELECT
+		    sum(d_info.amount - d_info.tax) as sumAmt
+		FROM
+			dev.branch_info b_info
+				inner join dev.account_info a_info
+					on b_info.branch_code = a_info.branch_code
+				inner join dev.deal_info d_info
+					on a_info.account_number = d_info.account_number
+		WHERE 
+			b_info.branch_name in (
+			<foreach collection="list" item="item" index="index" separator=",">
+				#{item}
+			</foreach>
+			) 
+				AND
+		    <![CDATA[
+			d_info.cancel <> 'Y'
+			]]>
+    </select>
 </mapper>
