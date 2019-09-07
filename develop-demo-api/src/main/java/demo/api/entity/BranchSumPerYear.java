@@ -2,7 +2,7 @@ package demo.api.entity;
 
 import java.util.List;
 
-public class BranchSumAmountSortDesc {
+public class BranchSumPerYear {
 	private Long year;
 	private List<BranchInfo> branchInfoList;
 

@@ -18,6 +18,6 @@ public class SearchDaoTest {
 	@Test
 	public void searchTest() {
 		String accountNumber = "11111111";
-		System.out.println(searchDao.selectAccountInfo(accountNumber));
+//		System.out.println(searchDao.selectAccountInfo(accountNumber));
 	}
 }

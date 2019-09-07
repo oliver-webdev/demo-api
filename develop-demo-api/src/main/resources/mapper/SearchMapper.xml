@@ -4,7 +4,87 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
     
 <mapper namespace="demo.api.dao.SearchDao">
-    <select id="selectAccountInfo" parameterType="string" resultType="demo.api.model.AccountInfo">
+     <select id="selectAccountInfo" parameterType="string" resultType="demo.api.model.AccountInfo">
         SELECT * FROM account_info WHERE account_number = #{accountNumber}
     </select>
+
+    <select id="selectCustomerMostSumPerYear" resultType="demo.api.entity.CustomerMostSum">
+	<![CDATA[
+		SELECT
+			res.year
+			, res.name
+			, res.acctNum
+			, res.sumAmt
+		FROM
+			(
+				SELECT
+					sub.year
+					, sub.name
+					, sub.acctNum
+					, sub.sumAmt
+					, case sub.year
+						when @groupyear then @rownum := @rownum+1
+						else @rownum := 1
+					  end as ranking
+					, @groupyear := sub.year
+				FROM
+					(
+						SELECT
+							left(d_info.deal_date, 4) as year
+							, a_info.account_name  as name
+							, d_info.account_number as acctNum
+							, sum(d_info.amount - d_info.tax) as sumAmt
+						FROM
+							dev.deal_info as d_info
+							inner join dev.account_info as a_info
+								on d_info.account_number = a_info.account_number
+						WHERE
+							d_info.cancel <> 'Y'
+								AND
+							(@rownum:=0)=0
+						GROUP BY
+							year, name, acctNum
+					) as sub
+				ORDER BY year ASC, sumAmt DESC
+			) as res
+		WHERE
+			res.ranking = '1'
+		GROUP BY
+			res.year, res.acctNum
+	]]>
+    </select>
+ 
+    <select id="selectCustomerNoDealing" resultType="demo.api.entity.CustomerNoDealing">
+		SELECT
+			sub.year as year
+		    , main.account_name as name
+		    , main.account_number as acctNum
+		FROM
+			account_info main
+			LEFT JOIN (
+					SELECT
+						left(d_info.deal_date, 4) as year
+						, a_info.account_number as acctNum
+						, sum(if(d_info.cancel = 'N', 1, 0)) as cancelCount
+					FROM
+						dev.account_info as a_info
+						left join dev.deal_info as d_info
+							on a_info.account_number = d_info.account_number
+					GROUP BY
+						year, acctNum
+			) as sub
+				on main.account_number = sub.acctNum
+		WHERE
+			sub.cancelCount = 0
+		ORDER BY
+			sub.year
+    </select>
+<!--
+    <select id="selectCustomerMostSum" resultType="demo.api.entity.BranchSumPerYear">
+        SELECT * FROM account_info WHERE account_number = #{accountNumber}
+    </select>
+
+    <select id="selectAccountInfo" parameterType="string" resultType="demo.api.entity.BranchSum">
+        SELECT * FROM account_info WHERE account_number = #{accountNumber}
+    </select> -->
 </mapper>
