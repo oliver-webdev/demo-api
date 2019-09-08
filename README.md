@@ -21,7 +21,7 @@
   1. 소스 다운로드 후, STS4를 통해 메이븐 프로젝트로 Import
   2. Import 후 빌드(프로젝트 우클릭 → Maven → Update Project)
   3. 프로젝트 실행 (프로젝트 우클릭 → Run As → Spring Boot App)
-  4. 각 api 기능의 url을 localhost에서 실행
+  4. 각 api 기능의 url을 localhost에서 실행 (application.properties 파일의 MySQL 접속정보 url, name, password 설정 필요)
       * 2018년, 2019년 각 연도별 합계 금액이 가장 많은 고객을 추출하는 API(GET, localhost:8080/api/mostSumCustomer)
       * 2018년 또는 2019년에 거래가 없는 고객을 추출하는 API(GET, localhost:8080/api/noDealingCustomer)
       * 연도별 관리점별 거래금액 합계를 구하고 합계금액이 큰 순서로 출력하는 API(GET, localhost:8080/api/sumPerYear)
