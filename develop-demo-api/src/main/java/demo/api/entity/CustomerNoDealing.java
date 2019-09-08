@@ -1,14 +1,14 @@
 package demo.api.entity;
 
 public class CustomerNoDealing {
-	private Long year;
+	private String year;
 	private String name;
 	private String acctNum;
 
-	public Long getYear() {
+	public String getYear() {
 		return year;
 	}
-	public void setYear(Long year) {
+	public void setYear(String year) {
 		this.year = year;
 	}
 	public String getName() {
